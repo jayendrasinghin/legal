@@ -1,0 +1,76 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: #f6f8fb;
+  color: #172033;
+}
+
+a {
+  color: #1b63d8;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.site-header {
+  max-width: 900px;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.tagline {
+  margin: 0;
+  max-width: 28rem;
+  font-size: 0.9rem;
+  color: #5f6b85;
+  line-height: 1.45;
+}
+
+.site-header nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.card {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+  line-height: 1.6;
+}
+
+.updated {
+  color: #5f6b85;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
+
+.error {
+  color: #be123c;
+}
+
+.card article {
+  white-space: pre-line;
+}
