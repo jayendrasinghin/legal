@@ -63,3 +63,24 @@ support_aiseo ≠ Prisma — use npm run db:seed there
 Prisma migrations only in ai_seo
 After frontend changes, always copy dist → /var/www/support-seoi (Nginx does not use ~/support_aiseo/dist directly)
 Don’t commit .env or notepad with passwords
+
+
+Option B — keep /var/www/support-seoi, always copy after build
+
+Save this as ~/support_aiseo/deploy.sh:
+
+#!/bin/bash
+set -e
+cd ~/support_aiseo
+git pull
+npm install
+npm run build
+rm -rf /var/www/support-seoi/*
+cp -a dist/. /var/www/support-seoi/
+mkdir -p /var/www/support-seoi/promo
+cp -a public/promo/. /var/www/support-seoi/promo/
+cp -a public/robots.txt public/sitemap.xml /var/www/support-seoi/
+pm2 restart legal-api --update-env
+systemctl reload nginx
+echo "Deployed."
+chmod +x ~/support_aiseo/deploy.sh

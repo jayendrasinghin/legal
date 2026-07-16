@@ -31,6 +31,63 @@ function formatWhen(value) {
   return new Date(value).toLocaleString()
 }
 
+function StoreStatusCard({ status }) {
+  if (!status) return null
+  return (
+    <div className="inbox-store-status">
+      <div className="inbox-store-status-top">
+        <strong>Store status</strong>
+        <span className={`pill ${status.installed ? 'replied' : 'pending'}`}>
+          {status.installed ? 'installed' : 'not installed'}
+        </span>
+      </div>
+      <dl className="inbox-store-grid">
+        <div>
+          <dt>Plan</dt>
+          <dd>{status.effectivePlanLabel || status.planLabel}</dd>
+        </div>
+        <div>
+          <dt>Installed on</dt>
+          <dd>{status.installedOn ? formatWhen(status.installedOn) : '—'}</dd>
+        </div>
+        <div>
+          <dt>Last used</dt>
+          <dd>{status.lastUsed ? formatWhen(status.lastUsed) : '—'}</dd>
+        </div>
+        <div>
+          <dt>AI SEO used</dt>
+          <dd>
+            {status.aiSeoUsed}
+            {status.effectivePlan === 'free' ? ` / ${status.freeQuotaLimit}` : ''}
+          </dd>
+        </div>
+        <div>
+          <dt>AI image used</dt>
+          <dd>{status.aiImageUsed}</dd>
+        </div>
+        {status.foundingMember ? (
+          <div>
+            <dt>Founding</dt>
+            <dd>
+              #{status.foundingMemberNumber}
+              {status.foundingActive ? ' (active)' : ' (ended)'}
+              {status.foundingExpiresAt
+                ? ` · until ${formatWhen(status.foundingExpiresAt)}`
+                : ''}
+            </dd>
+          </div>
+        ) : null}
+        {status.contactEmail ? (
+          <div>
+            <dt>Staff email</dt>
+            <dd>{status.contactEmail}</dd>
+          </div>
+        ) : null}
+      </dl>
+    </div>
+  )
+}
+
 function AdminLoginCard({ onSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -101,11 +158,15 @@ export function SupportInboxPage() {
   const [apps, setApps] = useState([])
   const [unassigned, setUnassigned] = useState({ total: 0, pending: 0, replied: 0 })
   const [appSlug, setAppSlug] = useState('all')
+  const [view, setView] = useState('messages') // messages | shops
   const [status, setStatus] = useState('all')
   const [q, setQ] = useState('')
   const [searchInput, setSearchInput] = useState('')
   const [counts, setCounts] = useState({ received: 0, pending: 0, replied: 0 })
   const [messages, setMessages] = useState([])
+  const [shops, setShops] = useState([])
+  const [foundingStats, setFoundingStats] = useState(null)
+  const [shopSearch, setShopSearch] = useState('')
   const [selectedId, setSelectedId] = useState(null)
   const [detail, setDetail] = useState(null)
   const [reply, setReply] = useState('')
@@ -146,6 +207,23 @@ export function SupportInboxPage() {
     setUnassigned(data.unassigned || { total: 0, pending: 0, replied: 0 })
   }, [])
 
+  const loadShops = useCallback(async () => {
+    setListLoading(true)
+    setError('')
+    try {
+      const data = await api('/api/support/shops')
+      setShops(data.shops || [])
+      setFoundingStats(data.foundingStats || null)
+    } catch (err) {
+      setError(err.message || 'Failed to load stores.')
+      if (err.status === 401) {
+        setAuth({ loading: false, authenticated: false, email: '' })
+      }
+    } finally {
+      setListLoading(false)
+    }
+  }, [])
+
   const loadMessages = useCallback(async () => {
     setListLoading(true)
     setError('')
@@ -170,12 +248,23 @@ export function SupportInboxPage() {
   useEffect(() => {
     if (!auth.authenticated) return
     loadApps().catch((err) => setError(err.message))
+    // Prefetch store count for sidebar
+    api('/api/support/shops')
+      .then((data) => {
+        setShops(data.shops || [])
+        setFoundingStats(data.foundingStats || null)
+      })
+      .catch(() => {})
   }, [auth.authenticated, loadApps])
 
   useEffect(() => {
     if (!auth.authenticated) return
+    if (view === 'shops') {
+      loadShops()
+      return
+    }
     loadMessages()
-  }, [auth.authenticated, loadMessages])
+  }, [auth.authenticated, view, loadMessages, loadShops])
 
   useEffect(() => {
     if (!selectedId || !auth.authenticated) {
@@ -280,8 +369,20 @@ export function SupportInboxPage() {
         <p className="inbox-side-label">Apps</p>
         <button
           type="button"
-          className={`inbox-app-tab ${appSlug === 'all' ? 'active' : ''}`}
+          className={`inbox-app-tab ${view === 'shops' ? 'active' : ''}`}
           onClick={() => {
+            setView('shops')
+            setSelectedId(null)
+          }}
+        >
+          <span>Installed stores</span>
+          <span className="inbox-count">{shops.length || '…'}</span>
+        </button>
+        <button
+          type="button"
+          className={`inbox-app-tab ${view === 'messages' && appSlug === 'all' ? 'active' : ''}`}
+          onClick={() => {
+            setView('messages')
             setAppSlug('all')
             setSelectedId(null)
           }}
@@ -295,8 +396,9 @@ export function SupportInboxPage() {
           <button
             key={app.id}
             type="button"
-            className={`inbox-app-tab ${appSlug === app.slug ? 'active' : ''}`}
+            className={`inbox-app-tab ${view === 'messages' && appSlug === app.slug ? 'active' : ''}`}
             onClick={() => {
+              setView('messages')
               setAppSlug(app.slug)
               setSelectedId(null)
             }}
@@ -308,8 +410,9 @@ export function SupportInboxPage() {
         {unassigned.total > 0 ? (
           <button
             type="button"
-            className={`inbox-app-tab ${appSlug === 'unassigned' ? 'active' : ''}`}
+            className={`inbox-app-tab ${view === 'messages' && appSlug === 'unassigned' ? 'active' : ''}`}
             onClick={() => {
+              setView('messages')
               setAppSlug('unassigned')
               setSelectedId(null)
             }}
@@ -334,14 +437,102 @@ export function SupportInboxPage() {
       <section className="inbox-main">
         <header className="inbox-header">
           <div>
-            <h1>{selectedApp?.name || 'All support messages'}</h1>
+            <h1>
+              {view === 'shops'
+                ? 'Installed stores'
+                : selectedApp?.name || 'All support messages'}
+            </h1>
             <p className="inbox-muted">
-              {selectedApp?.description ||
-                'Select an app tab to filter tickets. Click a message for full details and reply.'}
+              {view === 'shops'
+                ? 'Each store with app install status, plan, usage, and last activity.'
+                : selectedApp?.description ||
+                  'Select an app tab to filter tickets. Click a message for full details and reply.'}
             </p>
           </div>
         </header>
 
+        {view === 'shops' ? (
+          <>
+            {foundingStats ? (
+              <div className="inbox-stats">
+                <div className="inbox-stat active">
+                  <span className="label">Stores</span>
+                  <span className="value">{shops.length}</span>
+                </div>
+                <div className="inbox-stat">
+                  <span className="label">Founding used</span>
+                  <span className="value">
+                    {foundingStats.used}/{foundingStats.limit}
+                  </span>
+                </div>
+                <div className="inbox-stat">
+                  <span className="label">Slots left</span>
+                  <span className="value">{foundingStats.remaining}</span>
+                </div>
+              </div>
+            ) : null}
+
+            <form
+              className="inbox-search"
+              onSubmit={(e) => {
+                e.preventDefault()
+              }}
+            >
+              <input
+                type="search"
+                placeholder="Filter by shop domain…"
+                value={shopSearch}
+                onChange={(e) => setShopSearch(e.target.value)}
+              />
+              <button type="button" onClick={() => loadShops()}>
+                Refresh
+              </button>
+            </form>
+
+            {error ? <p className="error">{error}</p> : null}
+
+            <div className="inbox-shops-list">
+              {listLoading ? <p className="inbox-muted">Loading stores…</p> : null}
+              {!listLoading && shops.length === 0 ? (
+                <p className="inbox-muted">No installed stores found.</p>
+              ) : null}
+              {shops
+                .filter((s) =>
+                  shopSearch.trim()
+                    ? s.shop.toLowerCase().includes(shopSearch.trim().toLowerCase())
+                    : true,
+                )
+                .map((s) => (
+                  <article key={s.shop} className="inbox-shop-card">
+                    <div className="inbox-store-status-top">
+                      <h2>{s.shop}</h2>
+                      <span className={`pill ${s.installed ? 'replied' : 'pending'}`}>
+                        {s.installed ? 'installed' : 'not installed'}
+                      </span>
+                    </div>
+                    <p className="inbox-muted">
+                      Plan: <strong>{s.effectivePlanLabel}</strong>
+                      {s.plan !== s.effectivePlan ? ` (billing: ${s.planLabel})` : ''}
+                      {s.foundingMember
+                        ? ` · Founding #${s.foundingMemberNumber}${s.foundingActive ? ' active' : ''}`
+                        : ''}
+                    </p>
+                    <p className="inbox-muted">
+                      Installed on: {s.installedOn ? formatWhen(s.installedOn) : '—'} · Last used:{' '}
+                      {s.lastUsed ? formatWhen(s.lastUsed) : '—'}
+                    </p>
+                    <p className="inbox-muted">
+                      AI SEO used: {s.aiSeoUsed}
+                      {s.effectivePlan === 'free' ? ` / ${s.freeQuotaLimit}` : ''} · AI image used:{' '}
+                      {s.aiImageUsed}
+                      {s.contactEmail ? ` · ${s.contactEmail}` : ''}
+                    </p>
+                  </article>
+                ))}
+            </div>
+          </>
+        ) : (
+          <>
         <div className="inbox-stats">
           <button
             type="button"
@@ -437,6 +628,7 @@ export function SupportInboxPage() {
                     {detail.status === 'open' ? 'pending' : detail.status}
                   </span>
                 </div>
+                <StoreStatusCard status={detail.shopStatus} />
                 {detail.subject ? <h3>{detail.subject}</h3> : null}
                 <article className="inbox-body">{detail.message}</article>
                 <p className="inbox-muted">
@@ -489,6 +681,8 @@ export function SupportInboxPage() {
             )}
           </div>
         </div>
+          </>
+        )}
       </section>
     </main>
   )

@@ -8,6 +8,7 @@ import {
   sessionCookieHeader,
 } from './auth.js'
 import { pool } from './db.js'
+import { fetchInstalledShops, fetchShopStatus } from './shopStatus.js'
 
 const app = express()
 const PORT = Number(process.env.PORT || 4000)
@@ -126,6 +127,19 @@ app.get('/api/support/apps', requireAdmin, async (_req, res) => {
     return res.status(500).json({
       error:
         'Could not load apps. Run Shopify app migration for SupportApp / SupportMessage.',
+    })
+  }
+})
+
+app.get('/api/support/shops', requireAdmin, async (_req, res) => {
+  try {
+    const data = await fetchInstalledShops(pool)
+    return res.json(data)
+  } catch (error) {
+    console.error('Failed to list shops:', error)
+    return res.status(500).json({
+      error:
+        'Could not load stores. Ensure Session and StoreUsage tables exist (Shopify app DB).',
     })
   }
 })
@@ -260,7 +274,14 @@ app.get('/api/support/messages/:id', requireAdmin, async (req, res) => {
     if (!result.rows[0]) {
       return res.status(404).json({ error: 'Message not found' })
     }
-    return res.json({ message: result.rows[0] })
+    const message = result.rows[0]
+    let shopStatus = null
+    try {
+      shopStatus = await fetchShopStatus(pool, message.shop)
+    } catch (err) {
+      console.error('Shop status lookup failed:', err)
+    }
+    return res.json({ message: { ...message, shopStatus } })
   } catch (error) {
     console.error('Failed to load message:', error)
     return res.status(500).json({ error: 'Server error' })
