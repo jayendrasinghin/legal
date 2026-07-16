@@ -111,9 +111,12 @@ const StoreDetailView = ({ detail, loading, onBack }) => {
     return (
       <div className="inbox-empty-detail">
         <h2>Store statistics</h2>
-        <p className="inbox-muted">
-          Open the Installed tab and click a store to see full statistics.
-        </p>
+        <p className="inbox-muted">Loading…</p>
+        {onBack ? (
+          <button type="button" className="inbox-link-btn" onClick={onBack}>
+            ← Back to installed stores
+          </button>
+        ) : null}
       </div>
     )
   }
@@ -122,7 +125,7 @@ const StoreDetailView = ({ detail, loading, onBack }) => {
     <div className="inbox-store-detail">
       {onBack ? (
         <button type="button" className="inbox-link-btn" onClick={onBack}>
-          ← Back to installed list
+          ← Back to installed stores
         </button>
       ) : null}
       <div className="inbox-store-status-top">
@@ -619,16 +622,16 @@ export function SupportInboxPage() {
           <div>
             <h1>
               {view === 'store'
-                ? 'Store statistics'
+                ? shopDetail?.shop || selectedShop || 'Store statistics'
                 : view === 'shops'
                   ? 'Installed stores'
                   : selectedApp?.name || 'All support messages'}
             </h1>
             <p className="inbox-muted">
               {view === 'store'
-                ? 'Installed date, usage, working time today/total, and full activity for one store.'
+                ? 'Full activity for this store — install date, usage, working time, jobs, and tickets.'
                 : view === 'shops'
-                  ? 'Click a store to open full statistics.'
+                  ? 'All shops with the app installed. Click a store for full statistics.'
                   : selectedApp?.description ||
                     'Select an app tab to filter tickets. Click a message for full details and reply.'}
             </p>
@@ -674,27 +677,17 @@ export function SupportInboxPage() {
           </button>
           <button
             type="button"
-            className={`inbox-stat ${view === 'shops' ? 'active' : ''}`}
+            className={`inbox-stat ${view === 'shops' || view === 'store' ? 'active' : ''}`}
             onClick={() => {
               setView('shops')
               setSelectedId(null)
+              setShopDetail(null)
+              setSelectedShop('')
               loadShops()
             }}
           >
             <span className="label">Installed</span>
             <span className="value">{shops.length}</span>
-          </button>
-          <button
-            type="button"
-            className={`inbox-stat ${view === 'store' ? 'active' : ''}`}
-            onClick={() => {
-              setView('store')
-              setSelectedId(null)
-              if (selectedShop) loadShopDetail(selectedShop)
-            }}
-          >
-            <span className="label">Store</span>
-            <span className="value">{selectedShop ? '1' : '—'}</span>
           </button>
         </div>
 
@@ -702,7 +695,12 @@ export function SupportInboxPage() {
           <StoreDetailView
             detail={shopDetail}
             loading={shopDetailLoading}
-            onBack={() => setView('shops')}
+            onBack={() => {
+              setView('shops')
+              setShopDetail(null)
+              setSelectedShop('')
+              loadShops()
+            }}
           />
         ) : view === 'shops' ? (
           <>
