@@ -1,3 +1,65 @@
 email - jayendra.singh.in@gmail.com
 pwd - Jayendra@8098
 
+ssh root@159.223.197.194 -i ~/webkey
+
+Support system (brief)
+What it is
+
+Public site + admin inbox for SEOI support tickets
+Live: https://support.seoi.in
+Code: ~/shopify-apps/aiseo_support → GitHub legal.git
+Server folder: ~/support_aiseo
+DB: same Postgres as Shopify app — ai_product_desc
+URLs
+
+/privacy-policy — public privacy text
+/faq — public FAQ
+/help — public “Support (Shopify App)” text
+/support — admin Support inbox (login required)
+Shopify admin inbox (optional): https://support.seoi.in/admin → proxies to ai_seo on port 3000
+Apps in inbox
+
+Product Image SEO Optimizer (seoi)
+Pay Sync (pay-sync)
+Merchants submit tickets from the Shopify app → SupportMessage (tagged to SEOI)
+Login
+
+Email/password = AdminUser in DB (same as ADMIN_EMAIL / ADMIN_PASSWORD in ~/ai_seo/.env)
+Cookie session via legal-api
+Server pieces
+
+Nginx support.seoi.in
+Static: /var/www/support-seoi ← copy from ~/support_aiseo/dist
+/api/ → 127.0.0.1:4000 (legal-api)
+/admin/ → 127.0.0.1:3000 (shopify-app-ai_seo)
+PM2
+legal-api — Express API (~/support_aiseo/server/index.js)
+shopify-app-ai_seo — main Shopify app
+Deploy support site
+
+cd ~/support_aiseo
+git pull
+# ensure .env has DATABASE_URL=...ai_product_desc...
+npm install
+npm run db:seed          # policy_pages only
+npm run build
+cp -a dist/. /var/www/support-seoi/
+pm2 restart legal-api --update-env
+systemctl reload nginx
+Deploy DB tables (apps / messages)
+
+cd ~/ai_seo
+npx prisma migrate deploy   # SupportApp, SupportMessage, AdminUser, etc.
+pm2 restart shopify-app-ai_seo --update-env
+Local
+
+cd ~/shopify-apps/aiseo_support
+npm run dev                 # Vite :5173 + API :4000
+# open http://localhost:5173/support
+Important
+
+support_aiseo ≠ Prisma — use npm run db:seed there
+Prisma migrations only in ai_seo
+After frontend changes, always copy dist → /var/www/support-seoi (Nginx does not use ~/support_aiseo/dist directly)
+Don’t commit .env or notepad with passwords

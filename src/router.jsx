@@ -1,11 +1,12 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 import { PolicyPage } from './views/PolicyPage.jsx'
+import { PromoPage } from './views/PromoPage.jsx'
 import { SupportInboxPage } from './views/SupportInboxPage.jsx'
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/privacy-policy" replace />,
+    element: <Navigate to="/support" replace />,
   },
   {
     path: '/privacy-policy',
@@ -13,6 +14,10 @@ export const router = createBrowserRouter([
   },
   {
     path: '/support',
+    element: <PromoPage />,
+  },
+  {
+    path: '/support/admin',
     element: <SupportInboxPage />,
   },
   {

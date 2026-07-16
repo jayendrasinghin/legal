@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /support/admin
+Disallow: /api/
+
+Sitemap: https://support.seoi.in/sitemap.xml

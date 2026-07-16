@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { setPageSeo } from '../seo.js'
 
 async function api(path, options = {}) {
   const response = await fetch(path, {
@@ -30,7 +31,7 @@ function formatWhen(value) {
   return new Date(value).toLocaleString()
 }
 
-function LoginCard({ onSuccess }) {
+function AdminLoginCard({ onSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -56,10 +57,10 @@ function LoginCard({ onSuccess }) {
   return (
     <div className="inbox-login">
       <div className="inbox-login-card">
-        <p className="inbox-brand">Support inbox</p>
-        <h1>Sign in</h1>
+        <p className="inbox-brand">Support system</p>
+        <h1>Staff sign in</h1>
         <p className="inbox-sub">
-          Use your admin email and password to view app-wise tickets.
+          Use your admin email and password to open the app-wise support inbox.
         </p>
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>
@@ -70,6 +71,7 @@ function LoginCard({ onSuccess }) {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="username"
+            autoFocus
           />
           <label htmlFor="password">Password</label>
           <input
@@ -81,16 +83,20 @@ function LoginCard({ onSuccess }) {
             autoComplete="current-password"
           />
           <button type="submit" disabled={busy}>
-            {busy ? 'Signing in…' : 'Sign in'}
+            {busy ? 'Signing in…' : 'Open support inbox'}
           </button>
           {error ? <p className="error">{error}</p> : null}
         </form>
+        <p className="inbox-sub" style={{ marginTop: '1rem', marginBottom: 0 }}>
+          <Link to="/support">← Back to app promo</Link>
+        </p>
       </div>
     </div>
   )
 }
 
 export function SupportInboxPage() {
+  const navigate = useNavigate()
   const [auth, setAuth] = useState({ loading: true, authenticated: false, email: '' })
   const [apps, setApps] = useState([])
   const [unassigned, setUnassigned] = useState({ total: 0, pending: 0, replied: 0 })
@@ -124,6 +130,15 @@ export function SupportInboxPage() {
   useEffect(() => {
     refreshAuth()
   }, [refreshAuth])
+
+  useEffect(() => {
+    setPageSeo({
+      title: 'Staff login | Support inbox',
+      description: 'Private staff support inbox.',
+      path: '/support/admin',
+      noindex: true,
+    })
+  }, [])
 
   const loadApps = useCallback(async () => {
     const data = await api('/api/support/apps')
@@ -187,6 +202,7 @@ export function SupportInboxPage() {
     await api('/api/auth/logout', { method: 'POST' })
     setSelectedId(null)
     setAuth({ loading: false, authenticated: false, email: '' })
+    navigate('/support')
   }
 
   async function saveReply() {
@@ -241,7 +257,7 @@ export function SupportInboxPage() {
   }
 
   if (!auth.authenticated) {
-    return <LoginCard onSuccess={refreshAuth} />
+    return <AdminLoginCard onSuccess={refreshAuth} />
   }
 
   const selectedApp =
@@ -256,7 +272,9 @@ export function SupportInboxPage() {
       <aside className="inbox-sidebar">
         <div className="inbox-side-top">
           <p className="inbox-brand">Support inbox</p>
-          <p className="inbox-muted">{auth.email}</p>
+          <p className="inbox-muted" style={{ color: '#94a3b8' }}>
+            {auth.email}
+          </p>
         </div>
 
         <p className="inbox-side-label">Apps</p>
@@ -304,6 +322,7 @@ export function SupportInboxPage() {
         ) : null}
 
         <div className="inbox-side-footer">
+          <Link to="/support">App promo</Link>
           <Link to="/help">Public help page</Link>
           <Link to="/privacy-policy">Privacy</Link>
           <button type="button" className="inbox-link-btn" onClick={handleLogout}>

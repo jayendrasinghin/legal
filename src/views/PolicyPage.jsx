@@ -1,11 +1,24 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { APP_NAME, APP_TAGLINE_SHORT } from '../../appMeta.js'
+import { PROMO } from '../promoConfig.js'
+import { setPageSeo } from '../seo.js'
 
 export function PolicyPage({ slug }) {
   const [page, setPage] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!page) return
+    const path =
+      slug === 'support' ? '/help' : slug === 'privacy-policy' ? '/privacy-policy' : `/${slug}`
+    setPageSeo({
+      title: `${page.title} | ${APP_NAME}`,
+      description: (page.content || APP_TAGLINE_SHORT).slice(0, 155),
+      path,
+    })
+  }, [page, slug])
 
   useEffect(() => {
     let isMounted = true
@@ -74,31 +87,41 @@ export function PolicyPage({ slug }) {
   }, [slug])
 
   return (
-    <main className="page-shell">
-      <header className="site-header">
-        <div className="brand">
-          <h1>{APP_NAME}</h1>
-          <p className="tagline">{APP_TAGLINE_SHORT}</p>
+    <div className="promo-page">
+      <header className="promo-nav">
+        <div className="promo-nav-brand">
+          <strong>{PROMO.brand}</strong>
+          <span>seoi.in</span>
         </div>
         <nav>
-          <Link to="/privacy-policy">Privacy Policy</Link>
-          <Link to="/support">Support inbox</Link>
+          <Link to="/support">Home</Link>
+          <Link to="/privacy-policy">Privacy</Link>
           <Link to="/help">Help</Link>
           <Link to="/faq">FAQ</Link>
         </nav>
       </header>
 
-      <section className="card">
-        {loading ? <p>Loading...</p> : null}
+      <section className="promo-doc">
+        {loading ? <p className="promo-section-sub">Loading...</p> : null}
         {error ? <p className="error">{error}</p> : null}
         {!loading && !error && page ? (
           <>
-            <h2>{page.title}</h2>
-            <p className="updated">Last updated: {page.updatedAt}</p>
-            <article>{page.content}</article>
+            <h1>{page.title}</h1>
+            <p className="promo-doc-updated">Last updated: {page.updatedAt}</p>
+            <article className="promo-doc-body">{page.content}</article>
           </>
         ) : null}
       </section>
-    </main>
+
+      <footer className="promo-footer">
+        <span>{PROMO.brand}</span>
+        <a href={PROMO.ctaHref} target="_blank" rel="noreferrer">
+          Shopify App Store
+        </a>
+        <Link to="/privacy-policy">Privacy Policy</Link>
+        <Link to="/faq">FAQ</Link>
+        <Link to="/help">Help</Link>
+      </footer>
+    </div>
   )
 }
