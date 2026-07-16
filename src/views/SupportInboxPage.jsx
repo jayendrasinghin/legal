@@ -31,7 +31,7 @@ function formatWhen(value) {
   return new Date(value).toLocaleString()
 }
 
-function StoreStatusCard({ status }) {
+const StoreStatusCard = ({ status }) => {
   if (!status) return null
   return (
     <div className="inbox-store-status">
@@ -88,7 +88,7 @@ function StoreStatusCard({ status }) {
   )
 }
 
-function formatMinutes(mins) {
+const formatMinutes = (mins) => {
   const n = Number(mins) || 0
   if (n < 60) return `${n} min`
   const h = Math.floor(n / 60)
@@ -96,14 +96,14 @@ function formatMinutes(mins) {
   return m ? `${h}h ${m}m` : `${h}h`
 }
 
-function formatBytes(bytes) {
+const formatBytes = (bytes) => {
   const n = Number(bytes) || 0
   if (n < 1024) return `${n} B`
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`
   return `${(n / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function StoreDetailPanel({ detail, loading, onBack }) {
+const StoreDetailView = ({ detail, loading, onBack }) => {
   if (loading) {
     return <p className="inbox-muted">Loading store statistics…</p>
   }
@@ -246,7 +246,7 @@ function StoreDetailPanel({ detail, loading, onBack }) {
   )
 }
 
-function AdminLoginCard({ onSuccess }) {
+const AdminLoginCard = ({ onSuccess }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
