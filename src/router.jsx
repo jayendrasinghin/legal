@@ -1,5 +1,6 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 import { PolicyPage } from './views/PolicyPage.jsx'
+import { SupportInboxPage } from './views/SupportInboxPage.jsx'
 
 export const router = createBrowserRouter([
   {
@@ -12,6 +13,10 @@ export const router = createBrowserRouter([
   },
   {
     path: '/support',
+    element: <SupportInboxPage />,
+  },
+  {
+    path: '/help',
     element: <PolicyPage slug="support" />,
   },
   {

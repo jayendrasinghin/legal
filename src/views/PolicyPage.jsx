@@ -82,7 +82,8 @@ export function PolicyPage({ slug }) {
         </div>
         <nav>
           <Link to="/privacy-policy">Privacy Policy</Link>
-          <Link to="/support">Support</Link>
+          <Link to="/support">Support inbox</Link>
+          <Link to="/help">Help</Link>
           <Link to="/faq">FAQ</Link>
         </nav>
       </header>
