@@ -560,6 +560,28 @@ export function SupportInboxPage() {
           </p>
         </div>
 
+        <button
+          type="button"
+          className={`inbox-app-tab inbox-home-tab ${
+            view === 'messages' && appSlug === 'all' && status === 'all' && !selectedId
+              ? 'active'
+              : ''
+          }`}
+          onClick={() => {
+            setView('messages')
+            setAppSlug('all')
+            setStatus('all')
+            setSelectedId(null)
+            setShopDetail(null)
+            setSelectedShop('')
+            setQ('')
+            setSearchInput('')
+            navigate('/support/admin')
+          }}
+        >
+          <span>Home</span>
+        </button>
+
         <p className="inbox-side-label">Apps</p>
         <button
           type="button"
@@ -636,6 +658,25 @@ export function SupportInboxPage() {
                     'Select an app tab to filter tickets. Click a message for full details and reply.'}
             </p>
           </div>
+          {!(view === 'messages' && appSlug === 'all' && status === 'all' && !selectedId) ? (
+            <button
+              type="button"
+              className="inbox-home-btn"
+              onClick={() => {
+                setView('messages')
+                setAppSlug('all')
+                setStatus('all')
+                setSelectedId(null)
+                setShopDetail(null)
+                setSelectedShop('')
+                setQ('')
+                setSearchInput('')
+                navigate('/support/admin')
+              }}
+            >
+              Home
+            </button>
+          ) : null}
         </header>
 
         <div className="inbox-stats">

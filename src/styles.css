@@ -184,10 +184,38 @@ a:hover {
   min-height: 100vh;
 }
 
+.inbox-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .inbox-header h1 {
   margin: 0;
   font-size: 1.45rem;
   letter-spacing: -0.02em;
+}
+
+.inbox-home-tab {
+  margin-bottom: 0.65rem;
+  font-weight: 700;
+  border: 1px solid rgba(94, 234, 212, 0.35) !important;
+}
+
+.inbox-home-btn {
+  flex-shrink: 0;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid rgba(13, 148, 136, 0.45);
+  background: rgba(13, 148, 136, 0.12);
+  color: #0f766e;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.inbox-home-btn:hover {
+  background: rgba(13, 148, 136, 0.22);
 }
 
 .inbox-muted {
