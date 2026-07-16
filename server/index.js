@@ -8,7 +8,7 @@ import {
   sessionCookieHeader,
 } from './auth.js'
 import { pool } from './db.js'
-import { fetchInstalledShops, fetchShopStatus } from './shopStatus.js'
+import { fetchInstalledShops, fetchShopDetail, fetchShopStatus } from './shopStatus.js'
 
 const app = express()
 const PORT = Number(process.env.PORT || 4000)
@@ -141,6 +141,19 @@ app.get('/api/support/shops', requireAdmin, async (_req, res) => {
       error:
         'Could not load stores. Ensure Session and StoreUsage tables exist (Shopify app DB).',
     })
+  }
+})
+
+app.get('/api/support/shops/:shop', requireAdmin, async (req, res) => {
+  try {
+    const shop = decodeURIComponent(String(req.params.shop || '')).trim()
+    if (!shop) return res.status(400).json({ error: 'Shop required.' })
+    const detail = await fetchShopDetail(pool, shop)
+    if (!detail) return res.status(404).json({ error: 'Store not found.' })
+    return res.json({ shop: detail })
+  } catch (error) {
+    console.error('Failed to load shop detail:', error)
+    return res.status(500).json({ error: 'Could not load store statistics.' })
   }
 })
 

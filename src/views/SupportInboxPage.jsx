@@ -88,6 +88,164 @@ function StoreStatusCard({ status }) {
   )
 }
 
+function formatMinutes(mins) {
+  const n = Number(mins) || 0
+  if (n < 60) return `${n} min`
+  const h = Math.floor(n / 60)
+  const m = n % 60
+  return m ? `${h}h ${m}m` : `${h}h`
+}
+
+function formatBytes(bytes) {
+  const n = Number(bytes) || 0
+  if (n < 1024) return `${n} B`
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function StoreDetailPanel({ detail, loading, onBack }) {
+  if (loading) {
+    return <p className="inbox-muted">Loading store statistics…</p>
+  }
+  if (!detail) {
+    return (
+      <div className="inbox-empty-detail">
+        <h2>Store statistics</h2>
+        <p className="inbox-muted">
+          Open the Installed tab and click a store to see full statistics.
+        </p>
+      </div>
+    )
+  }
+  const s = detail.stats || {}
+  return (
+    <div className="inbox-store-detail">
+      {onBack ? (
+        <button type="button" className="inbox-link-btn" onClick={onBack}>
+          ← Back to installed list
+        </button>
+      ) : null}
+      <div className="inbox-store-status-top">
+        <div>
+          <h2>{detail.shop}</h2>
+          <p className="inbox-muted">{detail.effectivePlanLabel}</p>
+        </div>
+        <span className={`pill ${detail.installed ? 'replied' : 'pending'}`}>
+          {detail.installed ? 'installed' : 'not installed'}
+        </span>
+      </div>
+
+      <div className="inbox-stat-grid">
+        <div className="inbox-stat-tile">
+          <span className="label">Installed on</span>
+          <span className="value sm">
+            {detail.installedOn ? formatWhen(detail.installedOn) : '—'}
+          </span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">Last used</span>
+          <span className="value sm">
+            {detail.lastUsed ? formatWhen(detail.lastUsed) : '—'}
+          </span>
+        </div>
+        <div className="inbox-stat-tile highlight">
+          <span className="label">Working today</span>
+          <span className="value">{formatMinutes(s.workingMinutesToday)}</span>
+        </div>
+        <div className="inbox-stat-tile highlight">
+          <span className="label">Total working</span>
+          <span className="value">{formatMinutes(s.workingMinutesTotal)}</span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">Days installed</span>
+          <span className="value">{s.daysInstalled ?? '—'}</span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">Avg / day</span>
+          <span className="value">{formatMinutes(s.avgMinutesPerDay)}</span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">AI SEO used</span>
+          <span className="value">
+            {s.aiSeoUsed}
+            {detail.effectivePlan === 'free' ? ` / ${s.freeQuotaLimit}` : ''}
+          </span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">AI image used</span>
+          <span className="value">{s.aiImageUsed}</span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">Jobs today</span>
+          <span className="value">{s.jobsToday}</span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">Jobs total</span>
+          <span className="value">{s.jobsTotal}</span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">IndexNow</span>
+          <span className="value">
+            {s.indexNowToday}/{s.indexNowTotal}
+          </span>
+          <span className="hint">today / total</span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">Support tickets</span>
+          <span className="value">
+            {s.supportOpen} open · {s.supportTickets} total
+          </span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">ALT issues</span>
+          <span className="value">{s.imageIssuesOpen}</span>
+          <span className="hint">
+            missing {s.missingAlt} · short {s.shortAlt} · dup {s.duplicateAlt}
+          </span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">Images optimized</span>
+          <span className="value">{s.imagesOptimized}</span>
+          <span className="hint">saved {formatBytes(s.bytesSaved)}</span>
+        </div>
+      </div>
+
+      {detail.foundingMember ? (
+        <p className="inbox-muted">
+          Founding #{detail.foundingMemberNumber}
+          {detail.foundingActive ? ' (active)' : ' (ended)'}
+          {detail.foundingExpiresAt ? ` · until ${formatWhen(detail.foundingExpiresAt)}` : ''}
+        </p>
+      ) : null}
+      {detail.contactEmail ? (
+        <p className="inbox-muted">Staff email: {detail.contactEmail}</p>
+      ) : null}
+
+      <h3>Recent jobs</h3>
+      {!s.recentJobs?.length ? (
+        <p className="inbox-muted">No scan/optimize jobs logged yet.</p>
+      ) : (
+        <ul className="inbox-job-list">
+          {s.recentJobs.map((j, i) => (
+            <li key={`${j.kind}-${j.startedAt}-${i}`}>
+              <strong>{j.kind.replace('_', ' ')}</strong>
+              <span className={`pill ${j.status === 'completed' ? 'replied' : 'pending'}`}>
+                {j.status}
+              </span>
+              <span className="inbox-muted">
+                {formatWhen(j.startedAt)} · {formatMinutes(j.minutes)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="inbox-muted" style={{ marginTop: '1rem', fontSize: '0.82rem' }}>
+        Working minutes are estimated from image scan, link scan, and optimize job durations.
+      </p>
+    </div>
+  )
+}
+
 function AdminLoginCard({ onSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -158,7 +316,7 @@ export function SupportInboxPage() {
   const [apps, setApps] = useState([])
   const [unassigned, setUnassigned] = useState({ total: 0, pending: 0, replied: 0 })
   const [appSlug, setAppSlug] = useState('all')
-  const [view, setView] = useState('messages') // messages | shops
+  const [view, setView] = useState('messages') // messages | shops | store
   const [status, setStatus] = useState('all')
   const [q, setQ] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -167,11 +325,15 @@ export function SupportInboxPage() {
   const [shops, setShops] = useState([])
   const [foundingStats, setFoundingStats] = useState(null)
   const [shopSearch, setShopSearch] = useState('')
+  const [selectedShop, setSelectedShop] = useState('')
+  const [shopDetail, setShopDetail] = useState(null)
+  const [shopDetailLoading, setShopDetailLoading] = useState(false)
   const [selectedId, setSelectedId] = useState(null)
   const [detail, setDetail] = useState(null)
   const [reply, setReply] = useState('')
   const [error, setError] = useState('')
   const [listLoading, setListLoading] = useState(false)
+  const [shopsLoading, setShopsLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [flash, setFlash] = useState('')
 
@@ -208,7 +370,7 @@ export function SupportInboxPage() {
   }, [])
 
   const loadShops = useCallback(async () => {
-    setListLoading(true)
+    setShopsLoading(true)
     setError('')
     try {
       const data = await api('/api/support/shops')
@@ -220,9 +382,37 @@ export function SupportInboxPage() {
         setAuth({ loading: false, authenticated: false, email: '' })
       }
     } finally {
-      setListLoading(false)
+      setShopsLoading(false)
     }
   }, [])
+
+  const loadShopDetail = useCallback(async (shop) => {
+    if (!shop) {
+      setShopDetail(null)
+      return
+    }
+    setShopDetailLoading(true)
+    setError('')
+    try {
+      const data = await api(`/api/support/shops/${encodeURIComponent(shop)}`)
+      setShopDetail(data.shop || null)
+      setSelectedShop(shop)
+    } catch (err) {
+      setError(err.message || 'Failed to load store statistics.')
+      setShopDetail(null)
+    } finally {
+      setShopDetailLoading(false)
+    }
+  }, [])
+
+  const openStoreDetail = useCallback(
+    (shop) => {
+      setView('store')
+      setSelectedId(null)
+      loadShopDetail(shop)
+    },
+    [loadShopDetail],
+  )
 
   const loadMessages = useCallback(async () => {
     setListLoading(true)
@@ -259,12 +449,13 @@ export function SupportInboxPage() {
 
   useEffect(() => {
     if (!auth.authenticated) return
-    if (view === 'shops') {
-      loadShops()
-      return
-    }
     loadMessages()
-  }, [auth.authenticated, view, loadMessages, loadShops])
+  }, [auth.authenticated, loadMessages])
+
+  useEffect(() => {
+    if (!auth.authenticated || view !== 'shops') return
+    loadShops()
+  }, [auth.authenticated, view, loadShops])
 
   useEffect(() => {
     if (!selectedId || !auth.authenticated) {
@@ -369,17 +560,6 @@ export function SupportInboxPage() {
         <p className="inbox-side-label">Apps</p>
         <button
           type="button"
-          className={`inbox-app-tab ${view === 'shops' ? 'active' : ''}`}
-          onClick={() => {
-            setView('shops')
-            setSelectedId(null)
-          }}
-        >
-          <span>Installed stores</span>
-          <span className="inbox-count">{shops.length || '…'}</span>
-        </button>
-        <button
-          type="button"
           className={`inbox-app-tab ${view === 'messages' && appSlug === 'all' ? 'active' : ''}`}
           onClick={() => {
             setView('messages')
@@ -438,38 +618,99 @@ export function SupportInboxPage() {
         <header className="inbox-header">
           <div>
             <h1>
-              {view === 'shops'
-                ? 'Installed stores'
-                : selectedApp?.name || 'All support messages'}
+              {view === 'store'
+                ? 'Store statistics'
+                : view === 'shops'
+                  ? 'Installed stores'
+                  : selectedApp?.name || 'All support messages'}
             </h1>
             <p className="inbox-muted">
-              {view === 'shops'
-                ? 'Each store with app install status, plan, usage, and last activity.'
-                : selectedApp?.description ||
-                  'Select an app tab to filter tickets. Click a message for full details and reply.'}
+              {view === 'store'
+                ? 'Installed date, usage, working time today/total, and full activity for one store.'
+                : view === 'shops'
+                  ? 'Click a store to open full statistics.'
+                  : selectedApp?.description ||
+                    'Select an app tab to filter tickets. Click a message for full details and reply.'}
             </p>
           </div>
         </header>
 
-        {view === 'shops' ? (
+        <div className="inbox-stats">
+          <button
+            type="button"
+            className={`inbox-stat ${view === 'messages' && status === 'all' ? 'active' : ''}`}
+            onClick={() => {
+              setView('messages')
+              setStatus('all')
+              setSelectedId(null)
+            }}
+          >
+            <span className="label">Received</span>
+            <span className="value">{counts.received}</span>
+          </button>
+          <button
+            type="button"
+            className={`inbox-stat ${view === 'messages' && status === 'pending' ? 'active' : ''}`}
+            onClick={() => {
+              setView('messages')
+              setStatus('pending')
+              setSelectedId(null)
+            }}
+          >
+            <span className="label">Pending</span>
+            <span className="value">{counts.pending}</span>
+          </button>
+          <button
+            type="button"
+            className={`inbox-stat ${view === 'messages' && status === 'replied' ? 'active' : ''}`}
+            onClick={() => {
+              setView('messages')
+              setStatus('replied')
+              setSelectedId(null)
+            }}
+          >
+            <span className="label">Replied</span>
+            <span className="value">{counts.replied}</span>
+          </button>
+          <button
+            type="button"
+            className={`inbox-stat ${view === 'shops' ? 'active' : ''}`}
+            onClick={() => {
+              setView('shops')
+              setSelectedId(null)
+              loadShops()
+            }}
+          >
+            <span className="label">Installed</span>
+            <span className="value">{shops.length}</span>
+          </button>
+          <button
+            type="button"
+            className={`inbox-stat ${view === 'store' ? 'active' : ''}`}
+            onClick={() => {
+              setView('store')
+              setSelectedId(null)
+              if (selectedShop) loadShopDetail(selectedShop)
+            }}
+          >
+            <span className="label">Store</span>
+            <span className="value">{selectedShop ? '1' : '—'}</span>
+          </button>
+        </div>
+
+        {view === 'store' ? (
+          <StoreDetailView
+            detail={shopDetail}
+            loading={shopDetailLoading}
+            onBack={() => setView('shops')}
+          />
+        ) : view === 'shops' ? (
           <>
             {foundingStats ? (
-              <div className="inbox-stats">
-                <div className="inbox-stat active">
-                  <span className="label">Stores</span>
-                  <span className="value">{shops.length}</span>
-                </div>
-                <div className="inbox-stat">
-                  <span className="label">Founding used</span>
-                  <span className="value">
-                    {foundingStats.used}/{foundingStats.limit}
-                  </span>
-                </div>
-                <div className="inbox-stat">
-                  <span className="label">Slots left</span>
-                  <span className="value">{foundingStats.remaining}</span>
-                </div>
-              </div>
+              <p className="inbox-muted" style={{ margin: '0.35rem 0 0.75rem' }}>
+                Founding members: {foundingStats.used}/{foundingStats.limit} ·{' '}
+                {foundingStats.remaining} slots left
+              </p>
             ) : null}
 
             <form
@@ -492,8 +733,8 @@ export function SupportInboxPage() {
             {error ? <p className="error">{error}</p> : null}
 
             <div className="inbox-shops-list">
-              {listLoading ? <p className="inbox-muted">Loading stores…</p> : null}
-              {!listLoading && shops.length === 0 ? (
+              {shopsLoading ? <p className="inbox-muted">Loading stores…</p> : null}
+              {!shopsLoading && shops.length === 0 ? (
                 <p className="inbox-muted">No installed stores found.</p>
               ) : null}
               {shops
@@ -503,7 +744,12 @@ export function SupportInboxPage() {
                     : true,
                 )
                 .map((s) => (
-                  <article key={s.shop} className="inbox-shop-card">
+                  <button
+                    key={s.shop}
+                    type="button"
+                    className="inbox-shop-card inbox-shop-card-btn"
+                    onClick={() => openStoreDetail(s.shop)}
+                  >
                     <div className="inbox-store-status-top">
                       <h2>{s.shop}</h2>
                       <span className={`pill ${s.installed ? 'replied' : 'pending'}`}>
@@ -527,39 +773,15 @@ export function SupportInboxPage() {
                       {s.aiImageUsed}
                       {s.contactEmail ? ` · ${s.contactEmail}` : ''}
                     </p>
-                  </article>
+                    <p className="inbox-muted" style={{ color: '#0d9488' }}>
+                      Click for full statistics →
+                    </p>
+                  </button>
                 ))}
             </div>
           </>
         ) : (
           <>
-        <div className="inbox-stats">
-          <button
-            type="button"
-            className={`inbox-stat ${status === 'all' ? 'active' : ''}`}
-            onClick={() => setStatus('all')}
-          >
-            <span className="label">Received</span>
-            <span className="value">{counts.received}</span>
-          </button>
-          <button
-            type="button"
-            className={`inbox-stat ${status === 'pending' ? 'active' : ''}`}
-            onClick={() => setStatus('pending')}
-          >
-            <span className="label">Pending</span>
-            <span className="value">{counts.pending}</span>
-          </button>
-          <button
-            type="button"
-            className={`inbox-stat ${status === 'replied' ? 'active' : ''}`}
-            onClick={() => setStatus('replied')}
-          >
-            <span className="label">Replied</span>
-            <span className="value">{counts.replied}</span>
-          </button>
-        </div>
-
         <form
           className="inbox-search"
           onSubmit={(e) => {

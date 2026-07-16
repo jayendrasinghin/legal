@@ -553,8 +553,93 @@ a:hover {
   background: #fff;
 }
 
+.inbox-shop-card-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.inbox-shop-card-btn:hover {
+  border-color: rgba(13, 148, 136, 0.55);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
 .inbox-shop-card .inbox-muted {
   margin: 0.25rem 0 0;
+}
+
+.inbox-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.65rem;
+  margin: 0.85rem 0 1rem;
+}
+
+.inbox-stat-tile {
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: #fff;
+}
+
+.inbox-stat-tile.highlight {
+  border-color: rgba(13, 148, 136, 0.45);
+  background: rgba(13, 148, 136, 0.08);
+}
+
+.inbox-stat-tile .label {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.inbox-stat-tile .value {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 750;
+  color: #0f172a;
+}
+
+.inbox-stat-tile .value.sm {
+  font-size: 0.92rem;
+  font-weight: 650;
+}
+
+.inbox-stat-tile .hint {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.inbox-store-detail h3 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1rem;
+}
+
+.inbox-job-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.inbox-job-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: #fff;
 }
 
 /* —— Promo landing (logged out) —— */
