@@ -34,6 +34,7 @@ export function mapShopRow(row) {
   const eff = effectivePlan(usage)
   return {
     shop: row.shop,
+    storeDomain: row.shop,
     installed,
     status: installed ? 'installed' : 'not_installed',
     plan: usage.plan,
@@ -51,7 +52,9 @@ export function mapShopRow(row) {
     freeQuotaLimit: Number(row.freeQuotaLimit || 100),
     installedOn: row.firstSeenAt ? new Date(row.firstSeenAt).toISOString() : null,
     lastUsed: row.lastActivityAt ? new Date(row.lastActivityAt).toISOString() : null,
+    ownerName: [row.firstName, row.lastName].filter(Boolean).join(' ') || null,
     contactEmail: row.contactEmail || null,
+    whatsapp: row.whatsapp || null,
   }
 }
 
@@ -80,7 +83,28 @@ export async function fetchShopStatus(pool, shop) {
         WHERE s.shop = $1 AND s.email IS NOT NULL AND s.email <> ''
         ORDER BY s."accountOwner" DESC NULLS LAST, s."isOnline" DESC
         LIMIT 1
-      ) AS "contactEmail"
+      ) AS "contactEmail",
+      (
+        SELECT s."firstName"
+        FROM "Session" s
+        WHERE s.shop = $1
+        ORDER BY s."accountOwner" DESC NULLS LAST, s."isOnline" DESC
+        LIMIT 1
+      ) AS "firstName",
+      (
+        SELECT s."lastName"
+        FROM "Session" s
+        WHERE s.shop = $1
+        ORDER BY s."accountOwner" DESC NULLS LAST, s."isOnline" DESC
+        LIMIT 1
+      ) AS "lastName",
+      (
+        SELECT m.whatsapp
+        FROM "SupportMessage" m
+        WHERE m.shop = $1 AND m.whatsapp IS NOT NULL AND m.whatsapp <> ''
+        ORDER BY m."createdAt" DESC
+        LIMIT 1
+      ) AS whatsapp
     FROM (SELECT 1) dummy
     LEFT JOIN "StoreUsage" u ON u.shop = $1
     `,
@@ -114,7 +138,28 @@ export async function fetchInstalledShops(pool) {
         WHERE s.shop = shops.shop AND s.email IS NOT NULL AND s.email <> ''
         ORDER BY s."accountOwner" DESC NULLS LAST, s."isOnline" DESC
         LIMIT 1
-      ) AS "contactEmail"
+      ) AS "contactEmail",
+      (
+        SELECT s."firstName"
+        FROM "Session" s
+        WHERE s.shop = shops.shop
+        ORDER BY s."accountOwner" DESC NULLS LAST, s."isOnline" DESC
+        LIMIT 1
+      ) AS "firstName",
+      (
+        SELECT s."lastName"
+        FROM "Session" s
+        WHERE s.shop = shops.shop
+        ORDER BY s."accountOwner" DESC NULLS LAST, s."isOnline" DESC
+        LIMIT 1
+      ) AS "lastName",
+      (
+        SELECT m.whatsapp
+        FROM "SupportMessage" m
+        WHERE m.shop = shops.shop AND m.whatsapp IS NOT NULL AND m.whatsapp <> ''
+        ORDER BY m."createdAt" DESC
+        LIMIT 1
+      ) AS whatsapp
     FROM (
       SELECT DISTINCT shop FROM "Session" ORDER BY shop ASC
     ) shops

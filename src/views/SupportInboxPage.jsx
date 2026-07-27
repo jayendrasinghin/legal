@@ -43,6 +43,16 @@ const StoreStatusCard = ({ status }) => {
       </div>
       <dl className="inbox-store-grid">
         <div>
+          <dt>Store domain</dt>
+          <dd>{status.storeDomain || status.shop}</dd>
+        </div>
+        {status.ownerName ? (
+          <div>
+            <dt>Owner name</dt>
+            <dd>{status.ownerName}</dd>
+          </div>
+        ) : null}
+        <div>
           <dt>Plan</dt>
           <dd>{status.effectivePlanLabel || status.planLabel}</dd>
         </div>
@@ -81,6 +91,12 @@ const StoreStatusCard = ({ status }) => {
           <div>
             <dt>Staff email</dt>
             <dd>{status.contactEmail}</dd>
+          </div>
+        ) : null}
+        {status.whatsapp ? (
+          <div>
+            <dt>Mobile / WhatsApp</dt>
+            <dd>{status.whatsapp}</dd>
           </div>
         ) : null}
       </dl>
@@ -139,6 +155,22 @@ const StoreDetailView = ({ detail, loading, onBack }) => {
       </div>
 
       <div className="inbox-stat-grid">
+        <div className="inbox-stat-tile">
+          <span className="label">Store domain</span>
+          <span className="value sm">{detail.storeDomain || detail.shop}</span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">Owner</span>
+          <span className="value sm">{detail.ownerName || '—'}</span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">Staff email</span>
+          <span className="value sm">{detail.contactEmail || '—'}</span>
+        </div>
+        <div className="inbox-stat-tile">
+          <span className="label">Mobile / WhatsApp</span>
+          <span className="value sm">{detail.whatsapp || '—'}</span>
+        </div>
         <div className="inbox-stat-tile">
           <span className="label">Installed on</span>
           <span className="value sm">
@@ -222,6 +254,9 @@ const StoreDetailView = ({ detail, loading, onBack }) => {
       ) : null}
       {detail.contactEmail ? (
         <p className="inbox-muted">Staff email: {detail.contactEmail}</p>
+      ) : null}
+      {detail.whatsapp ? (
+        <p className="inbox-muted">Mobile / WhatsApp: {detail.whatsapp}</p>
       ) : null}
 
       <h3>Recent jobs</h3>
@@ -795,8 +830,10 @@ export function SupportInboxPage() {
                         {s.installed ? 'installed' : 'not installed'}
                       </span>
                     </div>
+                    {s.ownerName ? <p className="inbox-muted">Owner: {s.ownerName}</p> : null}
                     <p className="inbox-muted">
-                      Plan: <strong>{s.effectivePlanLabel}</strong>
+                      Domain: <strong>{s.storeDomain || s.shop}</strong> · Plan:{' '}
+                      <strong>{s.effectivePlanLabel}</strong>
                       {s.plan !== s.effectivePlan ? ` (billing: ${s.planLabel})` : ''}
                       {s.foundingMember
                         ? ` · Founding #${s.foundingMemberNumber}${s.foundingActive ? ' active' : ''}`
@@ -811,6 +848,7 @@ export function SupportInboxPage() {
                       {s.effectivePlan === 'free' ? ` / ${s.freeQuotaLimit}` : ''} · AI image used:{' '}
                       {s.aiImageUsed}
                       {s.contactEmail ? ` · ${s.contactEmail}` : ''}
+                      {s.whatsapp ? ` · ${s.whatsapp}` : ''}
                     </p>
                     <p className="inbox-muted" style={{ color: '#0d9488' }}>
                       Click for full statistics →
