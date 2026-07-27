@@ -14,8 +14,8 @@ export const PROMO = {
   offerTitle: '50% off yearly subscription',
   offerBody:
     'One plan unlocks AI SEO and PaySync together. Go annual and save 50% — search growth plus payment & PayPal tracking in a single install.',
-  /** Right-side hero image (files live in public/promo/) */
-  heroImage: '/promo/hero.png',
+  /** Right-side hero image (files live in public/promo/) — ?v= busts browser cache */
+  heroImage: '/promo/hero.png?v=20260727',
   /** YouTube watch or embed URL — set your real video here */
   youtubeUrl: 'https://youtu.be/4rwsJt28rB0',
   /**
