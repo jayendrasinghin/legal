@@ -54,6 +54,11 @@ export const PROMO = {
       body: 'Get help anytime for SEO, images, payments, or PayPal sync — one app, one support team.',
       image: '/promo/feature-6.png',
     },
+    {
+      title: 'Two powerful apps. One smart suite.',
+      body: 'AI SEO & Image Optimizer plus PayPal & Razorpay Sync — manage SEO, images, and payments in one place. Yearly subscription 50% off, with 24×7 support built for Shopify stores.',
+      image: '/promo/feature-7.png',
+    },
   ],
 }
 
