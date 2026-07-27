@@ -1,50 +1,58 @@
 /** Public promo landing (logged-out) — edit here for images / YouTube. */
 export const PROMO = {
-  brand: 'SEO & Image Optimizer',
+  brand: 'AI SEO & PaySync',
   siteUrl: 'https://seoi.in',
-  headline: 'Shopify app to get more customers from search & better product pages',
+  headline: 'One Shopify app for AI SEO growth and PayPal payment sync',
   subhead:
-    'AI product SEO and image tools for Shopify stores — optimize titles, descriptions, and ALT text so shoppers find you and convert more.',
+    'AI SEO, image tools, payment tags, and PayPal tracking — all in one app so you get found in search and keep fulfillments in sync.',
   ctaLabel: 'Install on Shopify',
   ctaHref: 'https://apps.shopify.com/ai-product-descriptions-seo',
-  /** Early-access offer — shown highlighted in the hero */
-  offerEyebrow: 'Limited early access',
-  offerTitle: 'First 200 stores',
-  offerBody: 'Install now and lock in free premium access while spots last.',
+  ctaLabelSecondary: '',
+  ctaHrefSecondary: '',
+  /** Launch offer — shown highlighted in the hero */
+  offerEyebrow: 'Launch offer',
+  offerTitle: '50% off yearly subscription',
+  offerBody:
+    'One plan unlocks AI SEO and PaySync together. Go annual and save 50% — search growth plus payment & PayPal tracking in a single install.',
   /** Right-side hero image (files live in public/promo/) */
   heroImage: '/promo/hero.png',
   /** YouTube watch or embed URL — set your real video here */
-  youtubeUrl: 'https://youtu.be/r7CxEVY-ZjA',
+  youtubeUrl: 'https://youtu.be/4rwsJt28rB0',
+  /**
+   * Feature carousel slides — one large image + title + body each.
+   * Recommended image size: 1600 × 900 px (16:9), PNG or JPG.
+   * Place files in public/promo/
+   */
   features: [
     {
-      title: 'AI product SEO for Shopify',
-      body: 'Generate titles, descriptions, and metadata that help customers find your products in search.',
-      image: '/promo/feature-seo.png',
+      title: 'AI SEO & PaySync',
+      body: 'One Shopify app with two powerful tools: AI SEO to grow traffic from search, and PaySync to tag payments and sync tracking to PayPal. Install once, run both — titles, images, orders, and fulfillments in a single workflow.',
+      image: '/promo/feature-1.png',
     },
     {
-      title: 'AI ALT text for images',
-      body: 'Write clear, searchable ALT text with AI so product images help shoppers and search engines.',
-      image: '/promo/feature-alttext.png',
+      title: 'AI SEO & product optimization',
+      body: 'Optimize product titles, descriptions, images, and ALT text with AI — so shoppers find you in search and convert on the page. Stronger product pages mean more traffic and more sales.',
+      image: '/promo/feature-2.png',
     },
     {
-      title: 'AI product photos',
-      body: 'Create studio-style product images and attach them fast — better visuals, more conversions.',
-      image: '/promo/feature-image.png',
+      title: 'AI product photos & optimize',
+      body: 'Create studio-style images and optimize for speed — better visuals, faster pages, more conversions.',
+      image: '/promo/feature-3.png',
     },
     {
-      title: 'Product Inventory',
-      body: 'Track and manage product stock levels so you stay in sync and avoid selling out or overselling.',
-      image: '/promo/feature-inventry.png',
+      title: 'Payment tags & order sync',
+      body: 'PaySync detects how each order was paid, adds clear Shopify tags, and keeps payment data synced — so your team can filter exceptions fast without opening every order.',
+      image: '/promo/feature-4.png',
     },
     {
-      title: 'Deep image optimization',
-      body: 'Optimize product images for speed and clarity so pages load faster and shoppers stay longer.',
-      image: '/promo/feature-scan.png',
+      title: 'PayPal tracking sync',
+      body: 'Send fulfillment tracking to PayPal after you ship in Shopify — when the order is properly mapped.',
+      image: '/promo/feature-5.png',
     },
     {
       title: 'Support 24×7',
-      body: 'Get help anytime — our team is available around the clock so your store never waits on SEO or image issues.',
-      image: '/promo/feature-support.png',
+      body: 'Get help anytime for SEO, images, payments, or PayPal sync — one app, one support team.',
+      image: '/promo/feature-6.png',
     },
   ],
 }

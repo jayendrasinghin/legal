@@ -1,13 +1,13 @@
 /** SEO defaults for the public promo / legal site (support.seoi.in). */
 export const SEO = {
-  siteName: 'SEO & Image Optimizer',
+  siteName: 'AI SEO & PaySync',
   origin: 'https://support.seoi.in',
   appStoreUrl: 'https://apps.shopify.com/ai-product-descriptions-seo',
-  title: 'Shopify SEO & Image Optimizer App | Get More Customers from Search',
+  title: 'AI SEO & PaySync for Shopify | One App for Search + Payments',
   description:
-    'Install the Shopify SEO & Image Optimizer app — AI product titles, descriptions, ALT text scan, and image tools to improve discoverability and conversions.',
+    'One Shopify app with AI SEO, image tools, payment tags, and PayPal tracking — grow from search and keep fulfillments in sync. 50% off yearly.',
   keywords:
-    'Shopify SEO app, product SEO, AI product descriptions, image ALT text, Shopify image optimizer, increase Shopify sales',
+    'Shopify AI SEO, PaySync, PayPal tracking, product SEO, image ALT text, Shopify payment tags, yearly discount',
   ogImage: 'https://support.seoi.in/favicon.ico',
 }
 

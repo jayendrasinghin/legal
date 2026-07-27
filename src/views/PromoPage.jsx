@@ -4,18 +4,82 @@ import { PROMO, youtubeEmbedSrc } from '../promoConfig.js'
 import { SEO, setPageSeo, upsertJsonLd } from '../seo.js'
 import { useEffect, useState } from 'react'
 
-function FeatureImage({ src, alt }) {
+function FeatureCarousel({ slides }) {
+  const [index, setIndex] = useState(0)
   const [broken, setBroken] = useState(false)
-  if (broken || !src) {
-    return <img src={heroFallback} alt={alt} className="promo-feature-img" />
+  const total = slides?.length || 0
+  const slide = total ? slides[index] : null
+
+  useEffect(() => {
+    setBroken(false)
+  }, [index])
+
+  useEffect(() => {
+    if (total < 2) return undefined
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % total)
+    }, 6000)
+    return () => clearInterval(id)
+  }, [total])
+
+  if (!slide) return null
+
+  const go = (next) => {
+    setIndex((i) => (i + next + total) % total)
   }
+
   return (
-    <img
-      src={src}
-      alt={alt}
-      className="promo-feature-img"
-      onError={() => setBroken(true)}
-    />
+    <div className="promo-carousel" aria-roledescription="carousel">
+      <div className="promo-carousel-stage">
+        <div className="promo-carousel-copy">
+          <p className="promo-carousel-count">
+            Feature {index + 1} / {total}
+          </p>
+          <h3>{slide.title}</h3>
+          <p>{slide.body}</p>
+          <div className="promo-carousel-controls">
+            <button
+              type="button"
+              className="promo-carousel-btn"
+              onClick={() => go(-1)}
+              aria-label="Previous feature"
+            >
+              ‹
+            </button>
+            <div className="promo-carousel-dots" role="tablist" aria-label="Feature slides">
+              {slides.map((s, i) => (
+                <button
+                  key={s.title}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === index}
+                  className={`promo-carousel-dot ${i === index ? 'active' : ''}`}
+                  onClick={() => setIndex(i)}
+                  aria-label={`Show ${s.title}`}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              className="promo-carousel-btn"
+              onClick={() => go(1)}
+              aria-label="Next feature"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+        <div className="promo-carousel-media">
+          <img
+            key={slide.image}
+            src={broken || !slide.image ? heroFallback : slide.image}
+            alt={slide.title}
+            className="promo-carousel-img"
+            onError={() => setBroken(true)}
+          />
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -69,7 +133,7 @@ export function PromoPage() {
           <h1>{PROMO.headline}</h1>
           <p className="promo-lead">{PROMO.subhead}</p>
           {PROMO.offerTitle ? (
-            <aside className="promo-offer" aria-label="Early access offer">
+            <aside className="promo-offer" aria-label="Launch offer">
               <p className="promo-offer-eyebrow">{PROMO.offerEyebrow}</p>
               <p className="promo-offer-title">{PROMO.offerTitle}</p>
               <p className="promo-offer-body">{PROMO.offerBody}</p>
@@ -79,12 +143,22 @@ export function PromoPage() {
             <a className="promo-btn" href={PROMO.ctaHref} target="_blank" rel="noreferrer">
               {PROMO.ctaLabel}
             </a>
+            {PROMO.ctaHrefSecondary ? (
+              <a
+                className="promo-btn ghost"
+                href={PROMO.ctaHrefSecondary}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {PROMO.ctaLabelSecondary || 'PaySync'}
+              </a>
+            ) : null}
           </div>
         </div>
         <div className="promo-hero-media">
           <img
             src={PROMO.heroImage || heroFallback}
-            alt="Shopify SEO and Image Optimizer app — AI product SEO preview"
+            alt="AI SEO and PaySync Shopify app — search growth and payment tracking"
             onError={(e) => {
               e.currentTarget.onerror = null
               e.currentTarget.src = heroFallback
@@ -94,24 +168,12 @@ export function PromoPage() {
       </section>
 
       <section id="features" className="promo-features">
-        <h2>Shopify SEO features that help you get more customers</h2>
-        <p className="promo-section-sub">
-          Built for Shopify merchants who want better search visibility, stronger product pages, and
-          more conversions.
-        </p>
-        <div className="promo-feature-grid">
-          {PROMO.features.map((f) => (
-            <article key={f.title} className="promo-feature-card">
-              <FeatureImage src={f.image} alt={f.title} />
-              <h3>{f.title}</h3>
-              <p>{f.body}</p>
-            </article>
-          ))}
-        </div>
+        <h2>Features</h2>
+        <FeatureCarousel slides={PROMO.features} />
       </section>
 
       <section id="video" className="promo-video">
-        <h2>See the Shopify SEO app in action</h2>
+        <h2>See the app in action</h2>
         {embed ? (
           <div className="promo-video-frame">
             <iframe
@@ -124,21 +186,23 @@ export function PromoPage() {
         ) : (
           <p className="promo-section-sub">
             Add your YouTube demo URL in <code>src/promoConfig.js</code> to help Google and shoppers
-            understand the app.
+            understand the apps.
           </p>
         )}
       </section>
 
       <section className="promo-features" style={{ paddingTop: 0 }}>
-        <h2>Install free on the Shopify App Store</h2>
+        <h2>Install once — SEO and PaySync together</h2>
         <p className="promo-section-sub">
           {PROMO.offerTitle
-            ? `${PROMO.offerTitle} — ${PROMO.offerBody} Free trial available on paid plans after.`
-            : 'Start with the free plan, optimize product SEO with AI, and grow traffic from search. Free trial available on paid plans.'}
+            ? `${PROMO.offerTitle}: ${PROMO.offerBody}`
+            : 'One Shopify install for AI SEO, images, payment tags, and PayPal tracking.'}
         </p>
-        <a className="promo-btn" href={PROMO.ctaHref} target="_blank" rel="noreferrer">
-          {PROMO.ctaLabel}
-        </a>
+        <div className="promo-hero-actions">
+          <a className="promo-btn" href={PROMO.ctaHref} target="_blank" rel="noreferrer">
+            {PROMO.ctaLabel}
+          </a>
+        </div>
       </section>
 
       <footer className="promo-footer">

@@ -897,44 +897,111 @@ a:hover {
   color: #94a3b8;
 }
 
-.promo-feature-grid {
+.promo-carousel {
+  margin-top: 0.75rem;
+}
+
+.promo-carousel-stage {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.75rem;
+  align-items: center;
 }
 
 @media (max-width: 860px) {
-  .promo-feature-grid {
+  .promo-carousel-stage {
     grid-template-columns: 1fr;
   }
 }
 
-.promo-feature-card {
-  background: rgba(15, 23, 42, 0.72);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 14px;
+.promo-carousel-media {
+  border-radius: 16px;
   overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+  background: #0b1220;
 }
 
-.promo-feature-img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
+.promo-carousel-img {
   display: block;
-  background: #1e293b;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  background: #0b1220;
 }
 
-.promo-feature-card h3 {
-  margin: 0.85rem 1rem 0.35rem;
+.promo-carousel-copy {
+  padding: 0.25rem 0;
+}
+
+.promo-carousel-count {
+  margin: 0 0 0.5rem;
+  color: #5eead4;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.promo-carousel-copy h3 {
+  margin: 0 0 0.65rem;
+  font-size: clamp(1.4rem, 3vw, 1.85rem);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #f8fafc;
+}
+
+.promo-carousel-copy > p:not(.promo-carousel-count) {
+  margin: 0 0 1.25rem;
+  color: #e2e8f0;
   font-size: 1.05rem;
-  color: #f1f5f9;
+  line-height: 1.55;
+  max-width: 34rem;
 }
 
-.promo-feature-card p {
-  margin: 0 1rem 1rem;
-  color: #94a3b8;
-  font-size: 0.92rem;
-  line-height: 1.45;
+.promo-carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.promo-carousel-btn {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.9);
+  color: #f8fafc;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.promo-carousel-btn:hover {
+  border-color: rgba(94, 234, 212, 0.55);
+  color: #5eead4;
+}
+
+.promo-carousel-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.promo-carousel-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.4);
+  cursor: pointer;
+}
+
+.promo-carousel-dot.active {
+  width: 1.35rem;
+  background: #5eead4;
 }
 
 .promo-video-frame {

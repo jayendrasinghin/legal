@@ -1,10 +1,10 @@
 /** Shopify listing + site copy (single source of truth). */
-export const APP_NAME = 'Product Image SEO Optimizer'
+export const APP_NAME = 'AI SEO & PaySync'
 
 /** Use for short / strict fields (e.g. App Store subtitle, meta description). */
 export const APP_TAGLINE_SHORT =
-  'AI-powered product SEO and image optimization to improve discoverability and conversions.'
+  'One Shopify app: AI SEO, images, payment tags, and PayPal tracking — 50% off yearly.'
 
 /** Use for full description / detail pages. */
 export const APP_DESCRIPTION_LONG =
-  'Boost product SEO and visuals with AI. Generate optimized product descriptions and alt text in one click, scan products for missing image SEO, and upgrade to AI image tools for faster merchandising.'
+  'AI SEO & PaySync in a single install. Optimize titles, descriptions, ALT text, and images, plus tag payments and sync tracking to PayPal — one subscription for search growth and order sync.'
