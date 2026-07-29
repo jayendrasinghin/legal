@@ -96,11 +96,22 @@ export function PromoPage() {
     upsertJsonLd('ld-software-app', {
       '@context': 'https://schema.org',
       '@type': 'SoftwareApplication',
-      name: PROMO.brand,
+      name: 'AI SEO & PaySync',
+      alternateName: [
+        'Seoi AI SEO and PaySync',
+        'PaySync PayPal Razorpay tracking sync',
+      ],
       applicationCategory: 'BusinessApplication',
       operatingSystem: 'Shopify',
       url: SEO.origin + '/support',
       description: SEO.description,
+      featureList: [
+        'AI product SEO titles and descriptions',
+        'Image ALT text and compression',
+        'PaySync payment tags for Shopify orders',
+        'PayPal tracking sync',
+        'Razorpay order sync',
+      ],
       offers: {
         '@type': 'Offer',
         price: '0',
@@ -158,7 +169,7 @@ export function PromoPage() {
         <div className="promo-hero-media">
           <img
             src={PROMO.heroImage || heroFallback}
-            alt="AI SEO and PaySync Shopify app — search growth and payment tracking"
+            alt="AI SEO and PaySync Shopify app — product SEO plus PayPal and Razorpay tracking sync"
             onError={(e) => {
               e.currentTarget.onerror = null
               e.currentTarget.src = heroFallback
@@ -192,7 +203,7 @@ export function PromoPage() {
       </section>
 
       <section className="promo-features" style={{ paddingTop: 0 }}>
-        <h2>Install once — SEO and PaySync together</h2>
+        <h2>Install once — AI SEO + PayPal & Razorpay sync</h2>
         <p className="promo-section-sub">
           {PROMO.offerTitle
             ? `${PROMO.offerTitle}: ${PROMO.offerBody}`

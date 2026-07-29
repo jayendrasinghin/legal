@@ -3,8 +3,8 @@ export const APP_NAME = 'AI SEO & PaySync'
 
 /** Use for short / strict fields (e.g. App Store subtitle, meta description). */
 export const APP_TAGLINE_SHORT =
-  'One Shopify app: AI SEO, images, payment tags, and PayPal tracking — 50% off yearly.'
+  'AI SEO + PaySync (PayPal & Razorpay tracking) — not paid ads. 50% off yearly.'
 
 /** Use for full description / detail pages. */
 export const APP_DESCRIPTION_LONG =
-  'AI SEO & PaySync in a single install. Optimize titles, descriptions, ALT text, and images, plus tag payments and sync tracking to PayPal — one subscription for search growth and order sync.'
+  'AI SEO & PaySync in one Shopify install. Optimize titles, descriptions, ALT text, and images. PaySync tags payments and syncs tracking to PayPal & Razorpay — payment sync, not Google Ads / PPC.'

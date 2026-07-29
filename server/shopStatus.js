@@ -14,9 +14,9 @@ function effectivePlan(usage, now = new Date()) {
 
 const PLAN_LABELS = {
   free: 'Free',
-  seo: 'SEO Starter',
-  image: 'AI Image',
-  seo_image: 'SEO Pro + Image',
+  seo: 'Basic',
+  image: 'Pro',
+  seo_image: 'Pro',
 }
 
 export function planLabel(plan) {

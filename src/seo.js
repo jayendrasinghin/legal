@@ -3,11 +3,11 @@ export const SEO = {
   siteName: 'AI SEO & PaySync',
   origin: 'https://support.seoi.in',
   appStoreUrl: 'https://apps.shopify.com/ai-product-descriptions-seo',
-  title: 'AI SEO & PaySync for Shopify | One App for Search + Payments',
+  title: 'AI SEO & PaySync for Shopify | PayPal & Razorpay Tracking Sync',
   description:
-    'One Shopify app with AI SEO, image tools, payment tags, and PayPal tracking — grow from search and keep fulfillments in sync. 50% off yearly.',
+    'Shopify app for AI product SEO and PaySync — PayPal & Razorpay payment tags and tracking sync. Not paid ads. Optimize titles, ALT text, and images. 50% off yearly.',
   keywords:
-    'Shopify AI SEO, PaySync, PayPal tracking, product SEO, image ALT text, Shopify payment tags, yearly discount',
+    'Shopify AI SEO, PaySync PayPal Razorpay, PayPal tracking sync, Razorpay order sync, product SEO, image ALT text, Shopify payment tags, not PPC',
   ogImage: 'https://support.seoi.in/favicon.ico',
 }
 
